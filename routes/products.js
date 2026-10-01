@@ -1,7 +1,11 @@
 const express = require("express");
 const { sql } = require("../db");
+const authenticateToken = require("../middleware/auth");
+const requireRole = require("../middleware/role");
 
 const router = express.Router();
+
+router.use(authenticateToken);
 
 
 router.get("/", async (req, res) => {
@@ -51,7 +55,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", requireRole("Admin"), async (req, res) => {
     try {
         const { name, price} = req.body;
 
@@ -82,7 +86,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireRole("Admin"), async (req, res) => {
     try {
         const id = Number(req.params.id);
 
@@ -131,7 +135,7 @@ router.put("/:id", async (req, res) => {
     
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireRole("Admin"), async (req, res) => {
     try {
         const id = Number(req.params.id);
 

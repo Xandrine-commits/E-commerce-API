@@ -1,8 +1,11 @@
 const express = require("express");
 const { sql } = require("../db");
 const { productExists } = require("../helpers/productHelper");
+const authenticateToken = require("../middleware/auth");
+const requireRole = require("../middleware/role");
 
 const router = express.Router();
+router.use(authenticateToken);
 
 router.get("/", async (req , res) => {
     try {
@@ -126,7 +129,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req,res) => {
+router.put("/:id", requireRole("Admin"), async (req,res) => {
     try {
         const id = Number(req.params.id);
 
@@ -197,7 +200,7 @@ if (!Number.isInteger(quantity) || quantity <= 0) {
     }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireRole("Admin"), async (req, res) => {
     try {
         const id = Number(req.params.id);
 
